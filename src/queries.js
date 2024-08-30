@@ -46,8 +46,28 @@ export const query8 = await Human.findAll({
 
 // Continue reading the instructions before you move on!
 
+
 // Print a directory of humans and their animals
-export async function printHumansAndAnimals() {}
+export async function printHumansAndAnimals() {
+    // Get the list of all humans
+    const humanList = await Human.findAll()
+    // Pull the list of the animals for each human
+    const animalList = await Promise.all(humanList.map( async (human) => {
+        return Animal.findAll({
+            where: { humanId: human.humanId}
+        })
+    }))
+    // Loop for pulling out human names
+    for (let i = 0; i < humanList.length; i++) {
+        console.log(humanList[i].getFullName())
+        // Loop for formating the animals
+        for (let j = 0; j < animalList[i].length; j++) {
+            console.log(`- ${animalList[i][j].name}, ${animalList[i][j].species}`)
+        }
+    }
+}
+
+printHumansAndAnimals()
 
 // Return a Set containing the full names of all humans
 // with animals of the given species.
