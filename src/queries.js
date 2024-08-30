@@ -48,21 +48,36 @@ export const query8 = await Human.findAll({
 
 
 // Print a directory of humans and their animals
+// export async function printHumansAndAnimals() {
+//     // Get the list of all humans
+//     const humanList = await Human.findAll()
+//     // Pull the list of the animals for each human
+//     const animalList = await Promise.all(humanList.map( async (human) => {
+//         return Animal.findAll({
+//             where: { humanId: human.humanId}
+//         })
+//     }))
+//     // Loop for pulling out human names
+//     for (let i = 0; i < humanList.length; i++) {
+//         console.log(humanList[i].getFullName())
+//         // Loop for formating the animals
+//         for (let j = 0; j < animalList[i].length; j++) {
+//             console.log(`- ${animalList[i][j].name}, ${animalList[i][j].species}`)
+//         }
+//     }
+// }
+// I realize after completing the assessment that I can also write this
+// using an includes on the human search to just grab both lists at the same
+// time. 
 export async function printHumansAndAnimals() {
-    // Get the list of all humans
-    const humanList = await Human.findAll()
-    // Pull the list of the animals for each human
-    const animalList = await Promise.all(humanList.map( async (human) => {
-        return Animal.findAll({
-            where: { humanId: human.humanId}
-        })
-    }))
-    // Loop for pulling out human names
+    const humanList = await Human.findAll({
+        include: Animal
+    })
+
     for (let i = 0; i < humanList.length; i++) {
         console.log(humanList[i].getFullName())
-        // Loop for formating the animals
-        for (let j = 0; j < animalList[i].length; j++) {
-            console.log(`- ${animalList[i][j].name}, ${animalList[i][j].species}`)
+        for (let j = 0; j < humanList[i].animals.length; j++) {
+            console.log(`- ${humanList[i].animals[j].name}, ${humanList[i].animals[j].species}`)
         }
     }
 }
@@ -85,5 +100,3 @@ export async function getHumansByAnimalSpecies(species) {
     }
     return humans    
 }
-
-getHumansByAnimalSpecies('dog')
