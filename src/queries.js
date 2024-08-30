@@ -67,8 +67,23 @@ export async function printHumansAndAnimals() {
     }
 }
 
-printHumansAndAnimals()
-
 // Return a Set containing the full names of all humans
 // with animals of the given species.
-export async function getHumansByAnimalSpecies(species) {}
+export async function getHumansByAnimalSpecies(species) {
+    // Get the list of all animals by species, include human data
+    const aniBySpecies = await Animal.findAll({
+        where: { 
+            species: species
+        },
+        include: Human
+    })
+
+    // Create the set using the list we've generated
+    const humans = new Set()
+    for (const animal of aniBySpecies) {
+        humans.add(animal.human.getFullName())
+    }
+    return humans    
+}
+
+getHumansByAnimalSpecies('dog')
